@@ -84,7 +84,7 @@ def get_time_interval(user_id):
     conn = create_connection()
 
     if conn is None:
-        ...
+        return error('Connection is not successfull')
 
     cursor = conn.cursor()
 
@@ -97,7 +97,7 @@ def get_time_interval(user_id):
 
     conn.close()
 
-    return row[0] if row else None
+    return row[0] if row else error('Failed get time_interval variable')
 
 
 def set_time_interval(user_id: int, time_interval: str):

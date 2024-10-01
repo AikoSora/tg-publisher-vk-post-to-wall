@@ -5,7 +5,7 @@ from aiogram.types import Message
 from keyboards import kb_inline
 
 
-router = Router(__name__)
+router = Router()
 
 
 @router.message(Command('start'))

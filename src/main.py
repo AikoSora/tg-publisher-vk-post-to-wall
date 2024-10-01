@@ -7,12 +7,15 @@ from handlers.menu import menu_handlers
 
 from dotenv import load_dotenv
 
+from pathlib import Path
+from os import getenv
+
 import logging
 
 
 logging.basicConfig(
     format='[%(asctime)s] - [%(levelname)s] - [%(message)s]',
-    level=logging.ERROR,
+    level=logging.DEBUG,
 )
 
 
@@ -34,9 +37,7 @@ async def main():
 
     on_startup()
 
-    from config import TOKEN
-
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=getenv("TG_TOKEN", None))
     dp = Dispatcher()
 
     dp.include_routers(start.router, menu_handlers.router)

@@ -75,6 +75,8 @@ async def command_start(message: Message, bot: Bot):
 
     user_id = message.from_user.id
 
+    text = message.text or message.caption or ''
+
     if user_id not in user_states:
         return await message.reply(
             text='Ты не выбрал действие!',
@@ -84,7 +86,7 @@ async def command_start(message: Message, bot: Bot):
     if user_states[user_id] == 'send_now':
         file = await bot.get_file(message.photo[-1].file_id)
         photo = await bot.download_file(file.file_path)
-        post_id = await send_post(photo)
+        post_id = await send_post(photo, text=text)
 
         await message.delete()
         await message.answer(
@@ -96,7 +98,7 @@ async def command_start(message: Message, bot: Bot):
     elif user_states[user_id] == 'add_to_deferred':
         file = await bot.get_file(message.photo[-1].file_id)
         photo = await bot.download_file(file.file_path)
-        post_id = await delay_post(photo, user_id)
+        post_id = await delay_post(photo, user_id, text=text)
 
         await message.answer(
             text=f"Пост <b>{post_id['post']}</b> добавлен в отложку <b>{datetime.fromtimestamp(post_id['date'])}</b> ",
