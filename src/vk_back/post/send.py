@@ -5,7 +5,28 @@ from os import getenv
 import vk_api
 
 
-async def send_post(photo: str, text: str = '') -> str:
+def get_cc_link(link: str) -> str:
+    """
+    Function to create short link
+
+    :param link str: Link to convert
+    :return str: short link
+    """
+
+    vk_session = vk_api.VkApi(token=getenv('VK_TOKEN', None))
+
+    response = vk_session.method(
+        method='utils.getShortLink',
+        values={
+            'url': link,
+            'private': 1,
+        },
+    )
+
+    return response.get('short_url', None)
+
+
+async def send_post(photo: str = '', text: str = '') -> str:
     """
     Function to send post in vk
 
@@ -15,6 +36,9 @@ async def send_post(photo: str, text: str = '') -> str:
     :return str:
     """
 
+    if not photo and not text:
+        raise Exception('Text is required if the photo parameter is not specified!')
+
     group = getenv('VK_GROUP', None)
 
     vk_session = vk_api.VkApi(token=getenv('VK_TOKEN', None))
@@ -23,7 +47,10 @@ async def send_post(photo: str, text: str = '') -> str:
         vk_session.get_api()
     )
 
-    photos = upload.photo_wall(photo, group_id=int(group))
+    photos = None
+
+    if photo:
+        photos = upload.photo_wall(photo, group_id=int(group))
 
     push = vk_session.method(
         method='wall.post',
@@ -31,14 +58,14 @@ async def send_post(photo: str, text: str = '') -> str:
             'message': text,
             'owner_id': f'-{group}',
             'from_group': 1,
-            'attachments': f'photo{photos[0]["owner_id"]}_{photos[0]["id"]}',
+            'attachments': f'photo{photos[0]["owner_id"]}_{photos[0]["id"]}' if photos else '',
         },
     )
 
     return f'https://vk.com/wall-{group}_{push["post_id"]}'
 
 
-async def delay_post(photo: str, user_id: int, text: str = '') -> dict:
+async def delay_post(user_id: int, text: str = '', photo: str = '') -> dict:
     """
     Function to send post in vk
 
@@ -57,7 +84,10 @@ async def delay_post(photo: str, user_id: int, text: str = '') -> dict:
         vk_session.get_api()
     )
 
-    photos = upload.photo_wall(photo, group_id=int(group))
+    photos = None
+
+    if photo:
+        photos = upload.photo_wall(photo, group_id=int(group))
 
     date = convert_time(user_id)
 
@@ -68,7 +98,7 @@ async def delay_post(photo: str, user_id: int, text: str = '') -> dict:
             'owner_id': f'-{group}',
             'from_group': 1,
             'publish_date': date,
-            'attachments': f'photo{photos[0]["owner_id"]}_{photos[0]["id"]}',
+            'attachments': f'photo{photos[0]["owner_id"]}_{photos[0]["id"]}' if photos else '',
         }
     )
 
@@ -81,4 +111,5 @@ async def delay_post(photo: str, user_id: int, text: str = '') -> dict:
 __all__ = (
     'send_post',
     'delay_post',
+    'get_cc_link',
 )
