@@ -19,11 +19,23 @@ The bot is written in Python3, using the asynchronous [aiogram](https://github.c
 ## Getting started
 
 ### Run in Docker
+
+Clone the repository
 ```
-git clone https://github.com/Evgeniy-DevOps/tg-publisher-vk-post-to-wall.git
+git clone https://github.com/AikoSora/tg-publisher-vk-post-to-wall.git
+```
+
+Configure the environment variables
+```
 cd tg-publisher-vk-post-to-wall
+nano example.env && echo "Settings env variables" > /dev/null
+cp example.env .env
+```
+
+Configure and run docker
+```
 docker build --rm --no-cache -t tg-publisher-vk-post-to-wall -f Dockerfile .
-docker run --rm -d -e TG_TOKEN='YOUR_TG_TOKEN' -e VK_TOKEN='YOUR_VK_API_KEY' -e VK_GROUP='YOUR_VK_ID_GROUP' tg-publisher-vk-post-to-wall
+docker run --rm -d tg-publisher-vk-post-to-wall
 ```
 
 ## Support
@@ -31,5 +43,3 @@ Pull requests are welcome. To make big changes, please open an issue first to di
 
 ## License
 [MIT](./LICENSE)
-
-
