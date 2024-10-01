@@ -11,9 +11,9 @@ from keyboards import kb_inline
 
 from db.db_interval import get_time_interval, set_time_interval
 
-from vk_back.post.send import send_post, delay_post, get_cc_link
+from vk_back.post.send import send_post, delay_post
 
-from re import match as re_match, compile
+from re import compile
 
 
 router = Router()
